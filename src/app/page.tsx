@@ -1,68 +1,130 @@
-import Image from "next/image";
+"use client";
+export const dynamic = 'force-dynamic';
+
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { ShieldAlert, Activity, ArrowRight, ShieldCheck, FileSearch } from "lucide-react";
+import { TrustMesh } from "@/components/ui/trust-mesh";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="relative flex flex-col min-h-screen bg-background overflow-hidden text-foreground selection:bg-white/10">
+      <TrustMesh />
+      
+      {/* Navbar */}
+      <header className="relative z-20 flex items-center justify-between px-6 py-4 border-b border-border/50 bg-background/50 backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded bg-primary flex items-center justify-center text-primary-foreground">
+            <ShieldCheck className="h-5 w-5" />
+          </div>
+          <span className="font-semibold tracking-tight text-lg">TRUSTMESH</span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
+          <Link href="/dashboard" className="hover:text-foreground transition-colors">Platform</Link>
+          <Link href="/agents" className="hover:text-foreground transition-colors">Agents</Link>
+          <Link href="/safety-drill" className="hover:text-foreground transition-colors">Safety Drill</Link>
+          <Link href="/scenarios" className="hover:text-foreground transition-colors">Scenarios</Link>
+        </nav>
+        <div className="flex items-center gap-4">
+          <Link href="/dashboard" className="text-sm font-medium hover:text-muted-foreground transition-colors">
+            Sign In
+          </Link>
+          <Link href="/dashboard" className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-full hover:bg-primary/90 transition-colors">
+            Dashboard
+          </Link>
         </div>
+      </header>
+
+      {/* Hero Section */}
+      <main className="relative z-20 flex-1 flex flex-col items-center justify-center px-6 text-center max-w-5xl mx-auto w-full pt-20 pb-32">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border/50 bg-secondary/50 backdrop-blur-sm text-xs font-medium text-muted-foreground mb-8"
+        >
+          <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+          Platform v1.0 is now live
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
+          className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 leading-tight"
+        >
+          Trust your AI agents before <br className="hidden md:block" />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 to-zinc-500">
+            you trust them with production.
+          </span>
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+          className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10 leading-relaxed"
+        >
+          The AI safety layer that stress-tests autonomous agents against adversarial behavior, unsafe tool use, and goal drift.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
+          className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center"
+        >
+          <Link
+            href="/safety-drill"
+            className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 bg-primary text-primary-foreground font-medium rounded-full hover:bg-primary/90 transition-all glow-primary"
+          >
+            <ShieldAlert className="h-5 w-5" />
+            Run Safety Drill
+          </Link>
+          <Link
+            href="/agents"
+            className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 bg-secondary text-secondary-foreground font-medium rounded-full border border-border hover:bg-secondary/80 transition-colors"
+          >
+            <Activity className="h-5 w-5" />
+            Explore Agents
+          </Link>
+        </motion.div>
+
+        {/* Feature Cards Preview */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.5, ease: "easeOut" }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-24 w-full text-left"
+        >
+          <div className="p-6 rounded-2xl border border-border/50 bg-secondary/20 backdrop-blur-sm border-gradient hover:bg-secondary/30 transition-colors">
+            <div className="h-10 w-10 rounded-lg bg-zinc-800 flex items-center justify-center mb-4 text-zinc-300">
+              <ShieldAlert className="h-5 w-5" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Adversarial Scenarios</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Run automated prompt injections, goal drifts, and privilege escalations against your active agent configurations.
+            </p>
+          </div>
+          <div className="p-6 rounded-2xl border border-border/50 bg-secondary/20 backdrop-blur-sm border-gradient hover:bg-secondary/30 transition-colors">
+            <div className="h-10 w-10 rounded-lg bg-zinc-800 flex items-center justify-center mb-4 text-zinc-300">
+              <FileSearch className="h-5 w-5" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Deep Tracing</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Observe exactly how agents reason through hostile inputs and which tool calls they attempt to execute.
+            </p>
+          </div>
+          <div className="p-6 rounded-2xl border border-border/50 bg-secondary/20 backdrop-blur-sm border-gradient hover:bg-secondary/30 transition-colors">
+            <div className="h-10 w-10 rounded-lg bg-zinc-800 flex items-center justify-center mb-4 text-zinc-300">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Automated Guardrails</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Generate actionable system prompt improvements and tool usage policies to mitigate discovered risks.
+            </p>
+          </div>
+        </motion.div>
       </main>
     </div>
   );

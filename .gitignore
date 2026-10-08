@@ -23,6 +23,12 @@
 # misc
 .DS_Store
 *.pem
+*.log
+
+# local IDE and agent caches
+/.vscode/
+/.kilo/
+.eslintcache
 
 # debug
 npm-debug.log*
@@ -31,6 +37,9 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
+.env
+.env.local
+.env.*.local
 .env*
 
 # vercel
