@@ -18,7 +18,8 @@ import {
   ChevronRight,
   ShieldCheck,
   ShieldAlert,
-  X
+  X,
+  Cpu
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -27,6 +28,7 @@ export const NAV_GROUPS = [
     title: "Workspace",
     items: [
       { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+      { name: "Token Intelligence", href: "/token-intelligence", icon: Cpu },
       { name: "Agents", href: "/agents", icon: Bot },
       { name: "Evaluations", href: "/evaluations", icon: ClipboardList },
       { name: "Safety Drill", href: "/safety-drill", icon: ShieldAlert },
