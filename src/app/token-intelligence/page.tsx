@@ -190,8 +190,11 @@ Execution Mode: ${workload.environment}
       const anchor = document.createElement("a");
       anchor.href = url;
       anchor.download = `trustmesh-token-report-${new Date().toISOString().slice(0, 10)}.pdf`;
+      anchor.style.display = "none";
+      document.body.appendChild(anchor);
       anchor.click();
-      URL.revokeObjectURL(url);
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
       setPdfFeedback("PDF downloaded");
     } catch {
       setPdfFeedback("PDF export failed. Please try again.");
