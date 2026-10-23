@@ -53,7 +53,7 @@ export function TrustMesh() {
     window.addEventListener("resize", resize);
     resize();
 
-    // Initialize nodes with subtle violet accents
+    // Initialize nodes with restrained monochrome accents
     for (let i = 0; i < numNodes; i++) {
       nodes.push({
         x: Math.random() * (canvas.width || 800),
@@ -90,7 +90,7 @@ export function TrustMesh() {
             const opacity = (1 - dist / connectionDistance) * 0.14;
             ctx.beginPath();
             if (nodes[i].isAccent && nodes[j].isAccent) {
-              ctx.strokeStyle = `rgba(139, 92, 246, ${opacity * 1.5})`;
+              ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.32})`;
             } else {
               ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
             }
@@ -107,9 +107,9 @@ export function TrustMesh() {
         ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
         
         if (node.isAccent) {
-          ctx.fillStyle = "rgba(167, 139, 250, 0.75)";
+          ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
           ctx.shadowBlur = 8;
-          ctx.shadowColor = "rgba(139, 92, 246, 0.5)";
+          ctx.shadowColor = "rgba(255, 255, 255, 0.3)";
         } else {
           ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
           ctx.shadowBlur = 0;
@@ -144,8 +144,7 @@ export function TrustMesh() {
       transition={{ duration: 1.2 }}
       className="absolute inset-0 z-0 pointer-events-none overflow-hidden"
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background z-10" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.08)_0%,transparent_60%)] z-10" />
+      <div className="absolute inset-0 bg-background/35 z-10" />
       <canvas ref={canvasRef} className="w-full h-full opacity-70" />
     </motion.div>
   );

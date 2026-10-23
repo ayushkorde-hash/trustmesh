@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   ShieldAlert, 
@@ -12,13 +13,17 @@ import {
   FileSearch, 
   Cpu,
   ArrowUpRight,
-  Zap
+  Zap,
+  Menu,
+  X
 } from "lucide-react";
 import { TrustMesh } from "@/components/ui/trust-mesh";
 
 export default function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
-    <div className="relative flex flex-col min-h-screen bg-[#050607] text-[#F4F4F6] selection:bg-violet-500/25 selection:text-white overflow-x-hidden">
+    <div className="relative flex flex-col min-h-screen bg-[#050607] text-[#F4F4F6] selection:bg-white/20 selection:text-white overflow-x-hidden">
       
       {/* ─── HERO: ai-sculpture.jpg as full-viewport cinematic background ─── */}
       <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
@@ -34,13 +39,13 @@ export default function Home() {
         />
         {/* Layered gradient system — preserves text while keeping the image visible */}
         {/* 1. Top vignette — darkens just enough behind the navbar */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-black/55" />
         {/* 2. Bottom fade — smooth transition from photo into dark sections */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050607] via-[#050607]/60 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-[#050607]/70" />
         {/* 3. Sides vignette for depth */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#050607]/50 via-transparent to-[#050607]/50" />
+        <div className="absolute inset-y-0 left-0 w-1/4 bg-black/20" />
         {/* 4. Ultraviolet colour wash — ties photo into the brand palette */}
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-900/20 via-transparent to-violet-950/15 mix-blend-screen" />
+        <div className="absolute inset-y-0 right-0 w-1/4 bg-black/20" />
       </div>
 
       {/* Interactive mesh canvas — sits on top of photo, below content */}
@@ -49,39 +54,62 @@ export default function Home() {
       {/* Top Navbar */}
       <header className="relative z-30 flex items-center justify-between px-6 md:px-12 py-5 border-b border-white/[0.07] bg-black/30 backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-violet-700 text-white shadow-sm ring-1 ring-violet-400/30">
+          <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-white text-black shadow-sm ring-1 ring-white/30">
             <ShieldCheck className="h-4.5 w-4.5" />
           </div>
           <span className="font-bold tracking-wider text-base">TRUSTMESH</span>
-          <span className="hidden sm:inline-flex text-[10px] font-mono uppercase tracking-widest text-violet-400/80 px-2 py-0.5 rounded border border-violet-500/20 bg-violet-500/5 ml-1">
-            AI Sec Layer
+          <span className="hidden sm:inline-flex text-[10px] font-mono uppercase tracking-widest text-white/65 px-2 py-0.5 rounded border border-white/15 bg-black/20 ml-1">
+            AI Security Platform
           </span>
         </div>
 
         <nav className="hidden md:flex items-center gap-8 text-xs uppercase tracking-wider font-medium text-muted-foreground">
           <Link href="/dashboard" className="hover:text-foreground transition-colors">Platform</Link>
-          <Link href="/token-intelligence" className="hover:text-foreground transition-colors text-violet-300/80 hover:text-violet-200">Token Intel</Link>
+          <Link href="/token-intelligence" className="hover:text-foreground transition-colors">Token Intel</Link>
           <Link href="/agents" className="hover:text-foreground transition-colors">Agents</Link>
           <Link href="/evaluations" className="hover:text-foreground transition-colors">Evaluations</Link>
           <Link href="/safety-drill" className="hover:text-foreground transition-colors">Safety Drill</Link>
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/15 bg-black/40 text-white hover:bg-white/10"
+            aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((current) => !current)}
+          >
+            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
           <Link 
             href="/dashboard" 
-            className="text-xs font-semibold px-4 py-2 rounded-md bg-white/[0.08] hover:bg-white/[0.12] text-foreground border border-white/[0.12] transition-all"
+            className="hidden sm:inline-flex text-xs font-semibold px-4 py-2 rounded-md bg-white/[0.08] hover:bg-white/[0.12] text-foreground border border-white/[0.12] transition-all"
           >
             Sign In
           </Link>
           <Link 
             href="/dashboard" 
-            className="text-xs font-semibold px-4 py-2 rounded-md bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-500 hover:to-violet-600 text-white shadow-sm shadow-violet-950 border border-violet-400/30 transition-all flex items-center gap-1.5"
+            className="text-xs font-semibold px-3 sm:px-4 py-2 rounded-md bg-white text-black hover:bg-zinc-200 border border-white transition-all flex items-center gap-1.5"
           >
             <span>Launch Console</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
       </header>
+      {menuOpen && (
+        <nav className="relative z-30 md:hidden border-b border-white/10 bg-black/90 px-6 py-4 backdrop-blur-md" aria-label="Mobile navigation">
+          <div className="grid grid-cols-2 gap-2 text-xs font-medium uppercase tracking-wider text-white/70">
+            {[
+              ["Platform", "/dashboard"], ["Token Intel", "/token-intelligence"], ["Agents", "/agents"],
+              ["Evaluations", "/evaluations"], ["Safety Drill", "/safety-drill"],
+            ].map(([label, href]) => (
+              <Link key={href} href={href} onClick={() => setMenuOpen(false)} className="rounded-md border border-white/10 px-3 py-2.5 hover:bg-white/10 hover:text-white">
+                {label}
+              </Link>
+            ))}
+          </div>
+        </nav>
+      )}
 
       {/* ─── Hero Section — overlaid on top of the photo ─── */}
       <main className="relative z-20 flex-1 flex flex-col items-center px-4 md:px-8 text-center max-w-6xl mx-auto w-full">
@@ -93,9 +121,9 @@ export default function Home() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 backdrop-blur-sm text-xs font-mono text-violet-300 mb-8"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/20 bg-black/35 backdrop-blur-sm text-xs font-mono text-white/85 mb-8"
           >
-            <span className="flex h-2 w-2 rounded-full bg-violet-400 animate-pulse" />
+            <span className="flex h-2 w-2 rounded-full bg-white animate-pulse" />
             <span>v1.0 Security Engine • Adversarial Testing Live</span>
           </motion.div>
 
@@ -107,7 +135,7 @@ export default function Home() {
             className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-6 leading-[1.08] max-w-5xl drop-shadow-2xl"
           >
             Trust your AI agents before <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-200 to-violet-300">
+            <span className="text-white">
               you trust them with production.
             </span>
           </motion.h1>
@@ -132,7 +160,7 @@ export default function Home() {
           >
             <Link
               href="/dashboard"
-              className="flex items-center justify-center gap-2 w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-500 hover:to-violet-600 text-white font-semibold text-sm rounded-lg shadow-lg shadow-violet-950/50 border border-violet-400/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="flex items-center justify-center gap-2 w-full sm:w-auto px-7 py-3.5 bg-white hover:bg-zinc-200 text-black font-semibold text-sm rounded-lg shadow-lg shadow-black/50 border border-white transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <span>Explore Platform</span>
               <ArrowRight className="h-4 w-4" />
@@ -141,14 +169,14 @@ export default function Home() {
               href="/token-intelligence"
               className="flex items-center justify-center gap-2 w-full sm:w-auto px-7 py-3.5 bg-white/[0.08] hover:bg-white/[0.14] text-foreground font-semibold text-sm rounded-lg border border-white/[0.15] backdrop-blur-sm transition-all hover:scale-[1.01]"
             >
-              <Cpu className="h-4 w-4 text-violet-400" />
+              <Cpu className="h-4 w-4 text-white" />
               <span>Token Intelligence</span>
             </Link>
             <Link
               href="/safety-drill"
               className="flex items-center justify-center gap-2 w-full sm:w-auto px-7 py-3.5 text-white/60 hover:text-foreground text-sm font-medium transition-colors"
             >
-              <ShieldAlert className="h-4 w-4 text-violet-400" />
+              <ShieldAlert className="h-4 w-4 text-white" />
               <span>Run Safety Drill</span>
               <ArrowUpRight className="h-4 w-4" />
             </Link>

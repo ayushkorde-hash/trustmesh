@@ -10,9 +10,9 @@
   --popover: #0C0E14;
   --popover-foreground: #F4F4F6;
   
-  --primary: #8B5CF6;
-  --primary-hover: #7C3AED;
-  --primary-foreground: #FFFFFF;
+  --primary: #F4F4F6;
+  --primary-hover: #FFFFFF;
+  --primary-foreground: #050607;
   
   --secondary: #12151D;
   --secondary-foreground: #E2E4E9;
@@ -28,9 +28,9 @@
 
   --border: rgba(255, 255, 255, 0.08);
   --border-subtle: rgba(255, 255, 255, 0.04);
-  --border-accent: rgba(139, 92, 246, 0.35);
+  --border-accent: rgba(255, 255, 255, 0.22);
   --input: rgba(255, 255, 255, 0.08);
-  --ring: #8B5CF6;
+  --ring: #F4F4F6;
   
   --radius: 0.625rem;
 }
@@ -97,22 +97,22 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.4);
+  background: rgba(255, 255, 255, 0.35);
 }
 
 /* Selection */
 ::selection {
-  background: rgba(139, 92, 246, 0.25);
+  background: rgba(255, 255, 255, 0.22);
   color: #FFFFFF;
 }
 
-/* Restrained ultraviolet lighting and glass effects */
+/* Monochrome lighting and glass effects */
 .glow-subtle {
-  box-shadow: 0 0 24px -4px rgba(139, 92, 246, 0.12);
+  box-shadow: 0 0 24px -4px rgba(255, 255, 255, 0.1);
 }
 
 .glow-primary {
-  box-shadow: 0 0 28px -2px rgba(139, 92, 246, 0.25);
+  box-shadow: 0 0 28px -2px rgba(255, 255, 255, 0.18);
 }
 
 .border-subtle {
@@ -120,7 +120,7 @@ body {
 }
 
 .border-violet-accent {
-  border-color: rgba(139, 92, 246, 0.35);
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
 .bg-surface-elevated {
@@ -133,10 +133,49 @@ body {
 
 /* Subtle dot / grid pattern for cybersecurity command center feel */
 .bg-grid-mesh {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 28px 28px;
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
 .bg-radial-violet {
-  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(139, 92, 246, 0.12), transparent 70%);
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+/* Compatibility layer while legacy screens are incrementally refined. */
+[class*="bg-gradient-to-"] {
+  background-image: none !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[class*="bg-violet-"],
+[class*="bg-indigo-"],
+[class*="bg-purple-"] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[class*="text-violet-"],
+[class*="text-indigo-"],
+[class*="text-purple-"] {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+[class*="border-violet-"],
+[class*="border-indigo-"],
+[class*="border-purple-"] {
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+[class*="ring-violet-"],
+[class*="ring-indigo-"],
+[class*="ring-purple-"] {
+  --tw-ring-color: rgba(255, 255, 255, 0.24) !important;
+}
+
+[class*="shadow-violet-"],
+[class*="shadow-indigo-"],
+[class*="shadow-purple-"] {
+  --tw-shadow-color: rgba(0, 0, 0, 0.55) !important;
+}
+
+[class*="accent-violet-"] {
+  accent-color: #f4f4f6 !important;
 }

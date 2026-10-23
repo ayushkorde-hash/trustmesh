@@ -163,6 +163,17 @@ TrustMesh uses a **premium black-on-black dark aesthetic**:
 
 ---
 
+## Token Intelligence Data Boundaries
+
+Token Intelligence runs entirely in the browser and never sends model prompts, API keys, or billing requests. Its values are deliberately separated into:
+
+- **Estimated usage:** deterministic workload estimates based on heuristic token ratios, not exact tokenizer output.
+- **Catalog-rate projection:** estimated tokens multiplied by the bundled reference values in `src/data/token-catalog.ts`; these are not live billing values.
+- **Locally tracked usage:** unavailable in this demo because no local usage collector is connected.
+- **Verified provider-reported usage or quota:** unavailable until a provider integration explicitly returns usage or billing data.
+
+Every catalog entry links to a provider source. Verify that source before making a purchasing decision.
+
 ## Deployment (Vercel)
 
 ```bash

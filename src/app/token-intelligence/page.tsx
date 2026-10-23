@@ -129,10 +129,10 @@ Execution Mode: ${workload.environment}
 • Daily Volume: ${prediction.dailyTotalTokens.toLocaleString()} tokens (${workload.requestsPerDay} requests)
 • Monthly Projected Volume: ${prediction.monthlyTotalTokens.toLocaleString()} tokens (${workload.planningHorizonDays} days)
 
---- Cost Projections (Verified Pricing) ---
+--- Cost Projections (Catalog Reference Rates, Not Live Billing) ---
 • Estimated Cost / Request: ${prediction.estimatedCostPerRequestUSD !== null ? `$${prediction.estimatedCostPerRequestUSD}` : 'N/A'}
 • Estimated Monthly Spend: ${prediction.estimatedMonthlyCostUSD !== null ? `$${prediction.estimatedMonthlyCostUSD}` : 'N/A'}
-• Pricing Source: ${activeModel.pricing.sourceUrl} (Verified: ${activeModel.pricing.lastVerifiedDate})
+• Catalog Source: ${activeModel.pricing.sourceUrl} (Snapshot: ${activeModel.pricing.lastVerifiedDate}; verify before purchase)
 
 --- Budget Health ---
 • User Monthly Token Budget: ${budget.monthlyTokenBudget.toLocaleString()} tokens (${budgetHealth.tokenPercent}% utilized)
@@ -163,8 +163,13 @@ Execution Mode: ${workload.environment}
               </span>
             </div>
             <p className="text-xs md:text-sm text-muted-foreground">
-              Predict context window consumption, multi-turn agent tool overhead, and commercial API costs across frontier and local LLMs.
+              Estimate context consumption, multi-turn agent overhead, and spend using a local reference-rate catalog. No provider account, billing, or quota data is connected.
             </p>
+            <div className="mt-3 inline-flex flex-wrap gap-2 text-[10px] font-mono uppercase tracking-wide text-white/70">
+              <span className="rounded border border-white/15 bg-white/5 px-2 py-1">Estimate mode</span>
+              <span className="rounded border border-white/15 bg-white/5 px-2 py-1">Local usage: unavailable</span>
+              <span className="rounded border border-white/15 bg-white/5 px-2 py-1">Provider reporting: unavailable</span>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -239,7 +244,7 @@ Execution Mode: ${workload.environment}
                   onClick={() => setWorkload(prev => ({ ...prev, inputMethod: 'technical' }))}
                   className={`px-2 py-0.5 rounded ${workload.inputMethod === 'technical' ? 'bg-violet-600 text-white font-semibold' : 'hover:text-white'}`}
                 >
-                  Exact Tokens
+                  Manual Tokens
                 </button>
               </div>
             </div>
@@ -548,7 +553,7 @@ Execution Mode: ${workload.environment}
               <div className="flex items-center gap-2">
                 <Info className="h-4 w-4 text-violet-400 shrink-0" />
                 <span>
-                  Pricing Basis: ${activeModel.pricing.inputPerMillionUSD}/M input • ${activeModel.pricing.outputPerMillionUSD}/M output
+                  Catalog rate: ${activeModel.pricing.inputPerMillionUSD}/M input • ${activeModel.pricing.outputPerMillionUSD}/M output • snapshot {activeModel.pricing.lastVerifiedDate}
                 </span>
               </div>
               <a 
@@ -575,7 +580,7 @@ Execution Mode: ${workload.environment}
                 <span>Model Optimization & Cross-Provider Recommendations</span>
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Ranked suitability analysis comparing cost, context size, and reasoning depth for this exact workload.
+                Suitability comparison using catalog-rate estimates, context size, and declared model characteristics. It is not a live provider recommendation.
               </p>
             </div>
           </div>
@@ -606,7 +611,7 @@ Execution Mode: ${workload.environment}
                       )}
                       {comp.isRecommendedLowestCost && (
                         <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase font-semibold">
-                          Lowest Cost
+                          Lowest Catalog Estimate
                         </span>
                       )}
                       {comp.isRecommendedLocal && (
@@ -732,10 +737,13 @@ Execution Mode: ${workload.environment}
           <div className="p-3.5 rounded-lg bg-white/[0.02] border border-white/[0.04] text-[11px] text-muted-foreground font-mono space-y-1">
             <span className="text-zinc-300 font-semibold block">Telemetry Distinction Notice:</span>
             <p>
-              • <strong>Estimated Usage:</strong> Calculated deterministically using workload parameters and standard Byte-Pair Encoding ratios.
+              • <strong>Estimated Usage:</strong> Calculated deterministically from the workload controls and heuristic token ratios. It is not an exact tokenizer result.
             </p>
             <p>
-              • <strong>Provider Quota:</strong> Real-time account balances and provider rate limits remain labeled as <em>Quota unavailable</em> unless explicitly reported by provider API headers.
+              • <strong>Catalog-Rate Spend:</strong> Cost projections multiply estimated tokens by the local catalog snapshot shown above. Verify the linked official pricing page before making a purchase decision.
+            </p>
+            <p>
+              • <strong>Locally Tracked Usage:</strong> Not connected in this demo. <strong>Verified Provider-Reported Usage:</strong> Unavailable until a provider integration explicitly returns usage or billing data.
             </p>
           </div>
         </div>
