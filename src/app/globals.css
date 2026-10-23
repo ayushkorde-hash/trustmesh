@@ -113,6 +113,24 @@ html.light body {
   transform: scale(1.06);
 }
 
+.app-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.app-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(5, 6, 7, 0.94), rgba(5, 6, 7, 0.97)), url("/images/human-ai-hands.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  opacity: 0.28;
+}
+
 @media (max-width: 639px) {
   .hero-image {
     object-position: 100% center;
@@ -139,6 +157,10 @@ html.light body {
 html.light .landing-shell {
   background: #f7f7f5;
   color: #111111;
+}
+
+html.light .app-shell::before {
+  display: none;
 }
 
 html.light .hero-background {

@@ -30,7 +30,7 @@ export default function Home() {
       <div className="hero-background absolute inset-x-0 top-0 h-[780px] md:h-[900px] z-0 overflow-hidden" aria-hidden="true">
         {/* The real photographic asset — large, intentional, recognizable */}
         <Image
-          src="/images/ai-sculpture.jpg"
+          src="/images/human-ai-hands.jpg"
           alt=""
           fill
           unoptimized
