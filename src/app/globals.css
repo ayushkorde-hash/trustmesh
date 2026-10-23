@@ -124,11 +124,31 @@ html.light body {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image: linear-gradient(rgba(5, 6, 7, 0.94), rgba(5, 6, 7, 0.97)), url("/images/human-ai-hands.jpg");
+  background-image: linear-gradient(rgba(5, 6, 7, 0.94), rgba(5, 6, 7, 0.97)), url("/images/ai-sculpture.jpg");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
   opacity: 0.28;
+}
+
+.platform-overview {
+  isolation: isolate;
+}
+
+.platform-overview::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(rgba(5, 6, 7, 0.82), rgba(5, 6, 7, 0.9)), url("/images/ai-sculpture.jpg");
+  background-size: cover;
+  background-position: center 28%;
+  opacity: 0.7;
+}
+
+html.light .platform-overview::before {
+  background: linear-gradient(rgba(247, 247, 245, 0.94), rgba(247, 247, 245, 0.96)), url("/images/ai-sculpture.jpg");
+  opacity: 0.24;
 }
 
 @media (max-width: 639px) {

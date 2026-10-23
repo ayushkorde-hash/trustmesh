@@ -30,7 +30,7 @@ export default function Home() {
       <div className="hero-background absolute inset-x-0 top-0 h-[780px] md:h-[900px] z-0 overflow-hidden" aria-hidden="true">
         {/* The real photographic asset — large, intentional, recognizable */}
         <Image
-          src="/images/human-ai-hands.jpg"
+          src="/images/ai-sculpture.jpg"
           alt=""
           fill
           unoptimized
@@ -161,7 +161,7 @@ export default function Home() {
             className="flex flex-col sm:flex-row items-center gap-3.5 w-full justify-center sm:justify-start"
           >
             <Link
-              href="/dashboard"
+              href="#platform-overview"
               className="flex items-center justify-center gap-2 w-full sm:w-auto px-7 py-3.5 bg-white hover:bg-zinc-200 text-black font-semibold text-sm rounded-lg shadow-lg shadow-black/50 border border-white transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <span>Explore Platform</span>
@@ -190,7 +190,8 @@ export default function Home() {
           initial={{ opacity: 0, y: 35 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.45, ease: "easeOut" }}
-          className="relative w-full rounded-2xl border border-white/[0.12] bg-[#090A0E]/95 p-2 sm:p-4 backdrop-blur-xl shadow-2xl shadow-black/80 overflow-hidden"
+          id="platform-overview"
+          className="platform-overview relative w-full rounded-2xl border border-white/[0.12] bg-[#090A0E]/95 p-2 sm:p-4 backdrop-blur-xl shadow-2xl shadow-black/80 overflow-hidden"
         >
           {/* Top terminal bar */}
           <div className="flex items-center justify-between pb-3 px-3 border-b border-white/[0.07] mb-4">

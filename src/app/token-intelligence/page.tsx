@@ -18,6 +18,7 @@ import {
   ShieldCheck, 
   Wrench
 } from "lucide-react";
+import { FileDown } from "lucide-react";
 import { 
   MODEL_CATALOG, 
   USE_CASE_PRESETS, 
@@ -36,6 +37,7 @@ import {
   compareAlternativeModels, 
   evaluateBudgetHealth 
 } from "@/lib/token-engine";
+import { createTokenReportPdf } from "@/lib/token-report-pdf";
 
 export default function TokenIntelligencePage() {
   // Default workload: Autonomous Research Agent with Claude 3.5 Sonnet
@@ -64,6 +66,7 @@ export default function TokenIntelligencePage() {
   });
 
   const [copyFeedback, setCopyFeedback] = React.useState(false);
+  const [pdfFeedback, setPdfFeedback] = React.useState<string | null>(null);
 
   // Compute prediction & comparisons
   const prediction: PredictionBreakdown = React.useMemo(() => {
@@ -145,6 +148,57 @@ Execution Mode: ${workload.environment}
     setTimeout(() => setCopyFeedback(false), 2500);
   };
 
+  const handleExportPdf = () => {
+    try {
+      const generatedAt = new Date().toLocaleString();
+      const reportLines = [
+        "TrustMesh AI Token Intelligence Report",
+        `Generated: ${generatedAt}`,
+        "",
+        `Workload: ${activeUseCase.name}`,
+        `Provider / model: ${activeModel.providerName} / ${activeModel.name}`,
+        `Execution mode: ${workload.environment}`,
+        "Data status: deterministic estimates from a local reference-rate catalog.",
+        "Provider-reported usage: unavailable. Locally tracked usage: unavailable.",
+        "",
+        "ESTIMATION RESULTS",
+        `Input tokens / request: ~${prediction.totalInputTokensPerRequest.toLocaleString()}`,
+        `Output tokens / request: ~${prediction.outputTokensPerRequest.toLocaleString()}`,
+        `Total tokens / request: ~${prediction.totalTokensPerRequest.toLocaleString()} (+/-${prediction.uncertaintyMarginTokens.toLocaleString()})`,
+        `Daily projected tokens: ${prediction.dailyTotalTokens.toLocaleString()}`,
+        `Monthly projected tokens: ${prediction.monthlyTotalTokens.toLocaleString()}`,
+        `Estimated cost / request: ${prediction.estimatedCostPerRequestUSD === null ? "N/A" : `$${prediction.estimatedCostPerRequestUSD}`}`,
+        `Estimated monthly spend: ${prediction.estimatedMonthlyCostUSD === null ? "N/A" : `$${prediction.estimatedMonthlyCostUSD}`}`,
+        `Context utilization: ${prediction.contextWindowUtilizationPercent}% of ${activeModel.contextWindowTokens.toLocaleString()}`,
+        `Tokenization method: ${prediction.tokenizationMethod}`,
+        "",
+        "MODEL COMPARISON",
+        ...comparisons.slice(0, 8).map((comparison) => `${comparison.model.providerName} ${comparison.model.name}: ${comparison.estimatedMonthlyTokens.toLocaleString()} monthly tokens, ${comparison.estimatedMonthlyCostUSD === null ? "N/A" : `$${comparison.estimatedMonthlyCostUSD}`} monthly estimate, suitability ${comparison.suitabilityScore}/100`),
+        "",
+        "BUDGETS",
+        `Monthly token budget: ${budget.monthlyTokenBudget.toLocaleString()} (${budgetHealth.tokenPercent}% utilized)`,
+        `Monthly spending budget: $${budget.monthlySpendingBudgetUSD} (${budgetHealth.spendPercent}% utilized)`,
+        `Budget status: ${budgetHealth.isOverSpendBudget ? "EXCEEDED" : budgetHealth.isNearWarningThreshold ? "NEAR THRESHOLD" : "HEALTHY"}`,
+        "",
+        "ASSUMPTIONS",
+        "Token counts are heuristic estimates based on the selected workload controls, model context and declared rates.",
+        "Prices are catalog reference rates and are not live billing, quota or provider-reported values.",
+        `Pricing source: ${activeModel.pricing.sourceUrl} (snapshot ${activeModel.pricing.lastVerifiedDate}).`,
+      ];
+      const blob = createTokenReportPdf(reportLines);
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `trustmesh-token-report-${new Date().toISOString().slice(0, 10)}.pdf`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      setPdfFeedback("PDF downloaded");
+    } catch {
+      setPdfFeedback("PDF export failed. Please try again.");
+    }
+    setTimeout(() => setPdfFeedback(null), 3000);
+  };
+
   return (
     <DashboardLayout>
       <div className="p-4 md:p-8 space-y-8 max-w-7xl mx-auto">
@@ -190,6 +244,10 @@ Execution Mode: ${workload.environment}
                   <span>Export Prediction Report</span>
                 </>
               )}
+            </Button>
+            <Button onClick={handleExportPdf} variant="outline" size="sm" className="h-9 px-3.5 text-xs border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.08] flex items-center gap-2 text-white">
+              <FileDown className="h-3.5 w-3.5" />
+              <span>{pdfFeedback ?? "Export as PDF"}</span>
             </Button>
           </div>
         </div>
