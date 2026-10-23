@@ -18,41 +18,42 @@ import {
   X
 } from "lucide-react";
 import { TrustMesh } from "@/components/ui/trust-mesh";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="relative flex flex-col min-h-screen bg-[#050607] text-[#F4F4F6] selection:bg-white/20 selection:text-white overflow-x-hidden">
+    <div className="landing-shell relative flex flex-col min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-foreground overflow-x-hidden">
       
       {/* ─── HERO: ai-sculpture.jpg as full-viewport cinematic background ─── */}
-      <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+      <div className="hero-background absolute inset-x-0 top-0 h-[780px] md:h-[900px] z-0 overflow-hidden" aria-hidden="true">
         {/* The real photographic asset — large, intentional, recognizable */}
         <Image
           src="/images/ai-sculpture.jpg"
           alt=""
           fill
+          unoptimized
           priority
           quality={90}
-          className="object-cover object-center scale-110"
-          style={{ objectPosition: "50% 30%" }}
+          className="hero-image object-cover object-center"
         />
         {/* Layered gradient system — preserves text while keeping the image visible */}
         {/* 1. Top vignette — darkens just enough behind the navbar */}
-        <div className="absolute inset-0 bg-black/55" />
+        <div className="absolute inset-0 bg-black/25" />
         {/* 2. Bottom fade — smooth transition from photo into dark sections */}
-        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-[#050607]/70" />
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-[#050607]/30" />
         {/* 3. Sides vignette for depth */}
-        <div className="absolute inset-y-0 left-0 w-1/4 bg-black/20" />
+        <div className="absolute inset-y-0 left-0 w-1/4 bg-black/10" />
         {/* 4. Ultraviolet colour wash — ties photo into the brand palette */}
-        <div className="absolute inset-y-0 right-0 w-1/4 bg-black/20" />
+        <div className="absolute inset-y-0 right-0 w-1/4 bg-black/10" />
       </div>
 
       {/* Interactive mesh canvas — sits on top of photo, below content */}
       <TrustMesh />
 
       {/* Top Navbar */}
-      <header className="relative z-30 flex items-center justify-between px-6 md:px-12 py-5 border-b border-white/[0.07] bg-black/30 backdrop-blur-md">
+      <header className="landing-header relative z-30 flex items-center justify-between px-6 md:px-12 py-5 border-b border-white/[0.07] bg-black/30 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-white text-black shadow-sm ring-1 ring-white/30">
             <ShieldCheck className="h-4.5 w-4.5" />
@@ -72,6 +73,7 @@ export default function Home() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
+          <ThemeToggle />
           <button
             type="button"
             className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/15 bg-black/40 text-white hover:bg-white/10"
@@ -112,10 +114,10 @@ export default function Home() {
       )}
 
       {/* ─── Hero Section — overlaid on top of the photo ─── */}
-      <main className="relative z-20 flex-1 flex flex-col items-center px-4 md:px-8 text-center max-w-6xl mx-auto w-full">
+      <main className="relative z-20 flex-1 flex flex-col items-center sm:items-start px-4 md:px-8 text-center sm:text-left max-w-6xl mx-auto w-full">
         
         {/* Hero content — minimal top padding so the sculpture is visible */}
-        <div className="flex flex-col items-center pt-28 md:pt-40 pb-16 md:pb-24">
+        <div className="landing-hero-copy flex flex-col items-center sm:items-start pt-28 md:pt-40 pb-16 md:pb-24 max-w-3xl">
           {/* Status Pill */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -156,7 +158,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
-            className="flex flex-col sm:flex-row items-center gap-3.5 w-full justify-center"
+            className="flex flex-col sm:flex-row items-center gap-3.5 w-full justify-center sm:justify-start"
           >
             <Link
               href="/dashboard"

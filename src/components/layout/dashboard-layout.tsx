@@ -14,7 +14,7 @@ export function DashboardLayout({ children }: LayoutProps) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
 
   return (
-    <div className="min-h-screen bg-[#050607] text-[#F4F4F6] selection:bg-violet-500/20 selection:text-white flex flex-col">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-foreground flex flex-col">
       {/* Sidebar with mobile drawer support */}
       <Sidebar
         collapsed={sidebarCollapsed}

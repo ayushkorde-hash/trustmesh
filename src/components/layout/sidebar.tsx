@@ -86,7 +86,7 @@ export function Sidebar({
           collapsed ? "justify-center" : "justify-between"
         )}>
           <Link href="/" className="flex items-center gap-3 font-semibold tracking-tight hover:opacity-90 transition-opacity">
-            <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-violet-700 text-white shadow-sm ring-1 ring-violet-400/30">
+            <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm ring-1 ring-border">
               <ShieldCheck className="h-4.5 w-4.5" />
               <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-60"></span>
@@ -96,7 +96,7 @@ export function Sidebar({
             {!collapsed && (
               <div className="flex flex-col">
                 <span className="text-sm font-bold tracking-wider text-foreground">TRUSTMESH</span>
-                <span className="text-[10px] font-mono tracking-widest text-violet-400 uppercase">AI SEC LAYER</span>
+                <span className="text-[10px] font-mono tracking-widest text-muted-foreground uppercase">AI SEC LAYER</span>
               </div>
             )}
           </Link>
@@ -158,18 +158,18 @@ export function Sidebar({
                     className={cn(
                       "relative flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all duration-150 group overflow-hidden",
                       isActive
-                        ? "text-white bg-gradient-to-r from-violet-600/20 to-violet-500/10 border border-violet-500/30 shadow-sm"
+                        ? "text-foreground bg-muted border border-border shadow-sm"
                         : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]",
                       collapsed && "justify-center px-2"
                     )}
                     title={collapsed ? item.name : undefined}
                   >
                     {isActive && (
-                      <span className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r bg-violet-400" />
+                      <span className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r bg-primary" />
                     )}
                     <item.icon className={cn(
                       "h-4 w-4 shrink-0 transition-colors",
-                      isActive ? "text-violet-400" : "text-muted-foreground group-hover:text-foreground"
+                      isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
                     )} />
                     {!collapsed && <span>{item.name}</span>}
                   </Link>
@@ -203,7 +203,7 @@ export function Sidebar({
       {/* Desktop Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 h-full bg-[#07080B] border-r border-white/[0.07] transition-all duration-300 hidden lg:block",
+          "fixed left-0 top-0 z-40 h-full bg-background border-r border-border transition-all duration-300 hidden lg:block",
           collapsed ? "w-16" : "w-64"
         )}
       >
@@ -227,7 +227,7 @@ export function Sidebar({
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed left-0 top-0 bottom-0 z-50 w-72 bg-[#07080B] border-r border-white/[0.08] lg:hidden"
+              className="fixed left-0 top-0 bottom-0 z-50 w-72 bg-background border-r border-border lg:hidden"
             >
               {sidebarContent}
             </motion.aside>

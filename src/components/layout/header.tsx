@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator 
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Bell, LogOut, Settings, Search, Menu, ChevronRight, ShieldAlert, Sparkles } from "lucide-react";
 
 export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
@@ -25,7 +26,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
     : paths[paths.length - 1].replace(/-/g, ' ').replace(/^./, str => str.toUpperCase());
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-[#07080B]/80 backdrop-blur-md border-b border-white/[0.07]">
+    <header className="sticky top-0 z-30 h-16 bg-background/90 backdrop-blur-md border-b border-border">
       <div className="flex h-full items-center justify-between px-4 md:px-8">
         
         {/* Left: Mobile trigger & Breadcrumbs */}
@@ -57,6 +58,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
 
         {/* Right: Actions, Search, Notifications, User */}
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           {/* Quick CTA to run Safety Drill */}
           <Link href="/safety-drill" className="hidden md:inline-flex">
             <Button size="sm" className="h-8 px-3 rounded-md bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-500 hover:to-violet-600 text-white font-medium text-xs shadow-sm shadow-violet-950 border border-violet-400/20 flex items-center gap-1.5">

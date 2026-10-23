@@ -4,7 +4,7 @@
 
 - Branch: `main`; remote: `origin` (`https://github.com/ayushkorde-hash/trustmesh.git`)
 - The application is a Next.js 16 App Router demo with all existing routes preserved.
-- The landing hero uses only `public/images/ai-sculpture.jpg`.
+- The landing hero uses only `public/images/ai-sculpture.jpg`, the supplied metallic AI-sculpture image.
 - `human-ai-hand.jpg` remains on disk but is not rendered or referenced by the app.
 
 ## Image Recovery
@@ -24,7 +24,11 @@ The catalog links to provider pricing pages, but it is not a live billing integr
 
 ## Visual System
 
-The shared style layer maps legacy violet, indigo, and purple utilities to monochrome neutrals and disables gradient fills while individual legacy screens are incrementally refined. The landing page now has a black-and-white hero, white primary actions, and a keyboard-accessible mobile navigation drawer.
+The shared style layer maps legacy violet, indigo, and purple utilities to monochrome neutrals and disables gradient fills while individual legacy screens are incrementally refined. The landing page has a black-and-white hero, white primary actions, and a keyboard-accessible mobile navigation drawer.
+
+## Theme System
+
+`src/components/ui/theme-toggle.tsx` controls a shared persisted `light` or `dark` class on the document root. The inline script in `src/app/layout.tsx` applies the saved choice, or the system preference when none is saved, before the page paints. Theme variables and light-mode compatibility rules live in `src/app/globals.css`.
 
 ## Safe Continuation
 

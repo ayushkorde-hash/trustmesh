@@ -174,6 +174,14 @@ Token Intelligence runs entirely in the browser and never sends model prompts, A
 
 Every catalog entry links to a provider source. Verify that source before making a purchasing decision.
 
+## Appearance and Themes
+
+TrustMesh includes a shared light/dark theme toggle in the landing and application navigation. The preference is stored in the browser, respects the operating-system preference when no choice has been saved, and applies before paint to avoid a theme flash.
+
+- **Dark mode:** pure-black surfaces, white typography, and neutral borders.
+- **Light mode:** off-white surfaces, dark typography, and neutral gray borders.
+- **Hero asset:** `public/images/ai-sculpture.jpg` is the supplied metallic AI-sculpture image. `human-ai-hand.jpg` is not rendered.
+
 ## Deployment (Vercel)
 
 ```bash
