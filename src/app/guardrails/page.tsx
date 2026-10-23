@@ -1,339 +1,157 @@
 "use client";
 export const dynamic = 'force-dynamic';
 
-import { cn } from "@/lib/utils";
+import * as React from "react";
+import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { Sidebar } from "@/components/layout/sidebar";
-import { Header } from "@/components/layout/header";
-import { Card } from "@/components/ui/card";
-import { CardHeader } from "@/components/ui/card";
-import { CardTitle } from "@/components/ui/card";
-import { CardContent } from "@/components/ui/card";
-import { Table } from "@/components/ui/table";
-import { TableHeader } from "@/components/ui/table";
-import { TableBody } from "@/components/ui/table";
-import { TableRow } from "@/components/ui/table";
-import { TableHead } from "@/components/ui/table";
-import { TableCell } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { generateId } from "@/lib/utils";
-import { GuardrailStatus } from "@/types";
-
-interface Guardrail {
-  id: string;
-  name: string;
-  description: string;
-  purpose: string;
-  affectedAgents: string[];
-  trigger: {
-    type: string;
-    condition: string;
-  };
-  action: {
-    type: string;
-    message?: string;
-  };
-  status: GuardrailStatus;
-  createdAt: string;
-  updatedAt: string;
-  testResults: { passed: boolean; timestamp: string }[];
-}
-
-const guardrails: Guardrail[] = [
-  {
-    id: "gr-001",
-    name: "External Content Verification",
-    description: "Verify all instructions from external content before execution",
-    purpose: "Prevent prompt injection via untrusted external sources",
-    affectedAgents: ["Research Agent", "Email Agent"],
-    trigger: {
-      type: "content_analysis",
-      condition: "external_content_contains_instructions",
-    },
-    action: {
-      type: "require_approval",
-      message: "Instruction from external content requires human approval",
-    },
-    status: "active",
-    createdAt: "2024-01-10T10:00:00Z",
-    updatedAt: "2024-01-15T10:35:00Z",
-    testResults: [
-      { passed: true, timestamp: "2024-01-15T10:35:00Z" },
-      { passed: false, timestamp: "2024-01-10T14:25:00Z" },
-    ],
-  },
-  {
-    id: "gr-002",
-    name: "Rate Limiting",
-    description: "Enforce rate limits on tool calls to prevent abuse",
-    purpose: "Prevent tool misuse and excessive resource consumption",
-    affectedAgents: ["Support Agent", "Email Agent"],
-    trigger: {
-      type: "tool_call",
-      condition: "tool_call_rate_exceeded",
-    },
-    action: {
-      type: "block",
-      message: "Rate limit exceeded. Please wait before making more requests.",
-    },
-    status: "active",
-    createdAt: "2024-01-05T14:00:00Z",
-    updatedAt: "2024-01-10T14:30:00Z",
-    testResults: [
-      { passed: true, timestamp: "2024-01-10T14:30:00Z" },
-    ],
-  },
-  {
-    id: "gr-003",
-    name: "Permission Boundary Enforcement",
-    description: "Reject any tool calls that exceed assigned permissions",
-    purpose: "Prevent permission escalation attempts",
-    affectedAgents: ["All Agents"],
-    trigger: {
-      type: "permission_check",
-      condition: "requested_permission_not_assigned",
-    },
-    action: {
-      type: "block",
-      message: "Action blocked: Requested permission not assigned to this agent",
-    },
-    status: "testing",
-    createdAt: "2024-01-12T09:00:00Z",
-    updatedAt: "2024-01-16T08:15:00Z",
-    testResults: [
-      { passed: true, timestamp: "2024-01-16T08:15:00Z" },
-      { passed: true, timestamp: "2024-01-14T11:00:00Z" },
-    ],
-  },
-  {
-    id: "gr-004",
-    name: "Objective Verification Checkpoint",
-    description: "Periodic check to verify agent alignment with original objective",
-    purpose: "Detect and prevent goal drift in multi-step workflows",
-    affectedAgents: ["Finance Agent", "Research Agent", "Trading Agent"],
-    trigger: {
-      type: "reasoning_analysis",
-      condition: "step_count_modulo_3_equals_0",
-    },
-    action: {
-      type: "warn",
-      message: "Checkpoint: Verify current action aligns with original objective",
-    },
-    status: "draft",
-    createdAt: "2024-01-15T16:00:00Z",
-    updatedAt: "2024-01-15T16:00:00Z",
-    testResults: [],
-  },
-  {
-    id: "gr-005",
-    name: "High-Value Trade Approval",
-    description: "Require human approval for trades exceeding risk threshold",
-    purpose: "Prevent unsafe autonomous financial actions",
-    affectedAgents: ["Trading Agent"],
-    trigger: {
-      type: "tool_call",
-      condition: "trade_value_exceeds_10_percent_portfolio",
-    },
-    action: {
-      type: "require_approval",
-      message: "Trade exceeds 10% portfolio threshold. Human approval required.",
-    },
-    status: "active",
-    createdAt: "2023-12-20T14:00:00Z",
-    updatedAt: "2023-12-20T14:05:00Z",
-    testResults: [
-      { passed: true, timestamp: "2023-12-20T14:05:00Z" },
-    ],
-  },
-  {
-    id: "gr-006",
-    name: "External Transfer Block",
-    description: "Block all external data transfers unless explicitly authorized",
-    purpose: "Prevent data exfiltration via unauthorized external transfers",
-    affectedAgents: ["All Agents"],
-    trigger: {
-      type: "tool_call",
-      condition: "tool_call_is_external_transfer",
-    },
-    action: {
-      type: "block",
-      message: "External transfer blocked: No authorization found",
-    },
-    status: "inactive",
-    createdAt: "2024-01-08T10:00:00Z",
-    updatedAt: "2024-01-08T10:00:00Z",
-    testResults: [],
-  },
-];
+import { 
+  Shield, 
+  Play, 
+  CheckCircle2
+} from "lucide-react";
+import { MOCK_GUARDRAILS } from "@/data/mock-data";
 
 export default function GuardrailsPage() {
+  const [guardrailList, setGuardrailList] = React.useState(MOCK_GUARDRAILS);
+  const [successNotice, setSuccessNotice] = React.useState<string | null>(null);
+
+  const toggleGuardrail = (id: string) => {
+    setGuardrailList(prev => prev.map(g => {
+      if (g.id === id) {
+        const nextStatus = g.status === 'active' ? 'inactive' : 'active';
+        setSuccessNotice(`Updated ${g.name} status to ${nextStatus.toUpperCase()}`);
+        return { ...g, status: nextStatus };
+      }
+      return g;
+    }));
+
+    setTimeout(() => {
+      setSuccessNotice(null);
+    }, 3000);
+  };
+
   return (
     <DashboardLayout>
-      <Sidebar />
-      <main className="flex-1 overflow-x-hidden overflow-y-auto lg:pl-64">
-        <Header onMenuClick={() => {}} />
+      <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto">
+        
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.07]">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white flex items-center gap-2.5">
+                <Shield className="h-7 w-7 text-violet-400" />
+                <span>Runtime Guardrails & Policy Gates</span>
+              </h1>
+            </div>
+            <p className="text-xs md:text-sm text-muted-foreground">
+              Deterministic input sanitizers, tool argument validators, and human-in-the-loop approval policies.
+            </p>
+          </div>
 
-        <div className="pb-4 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            Guardrails
-          </h1>
-          <Button variant="default" className="gap-2">
-            <svg
-              className="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            Create Guardrail
-          </Button>
+          <div className="flex items-center gap-3">
+            <Link href="/safety-drill">
+              <Button size="sm" className="h-9 px-4 rounded-lg bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-500 hover:to-violet-600 text-white font-medium text-xs shadow-md shadow-violet-950 flex items-center gap-2">
+                <Play className="h-3.5 w-3.5 fill-current" />
+                <span>Test Policies in Drill</span>
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        {/* Guardrails Table */}
-        <div className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Guardrail Management</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Purpose</TableHead>
-                    <TableHead>Affected Agents</TableHead>
-                    <TableHead>Trigger</TableHead>
-                    <TableHead>Action</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {guardrails.map((gr) => (
-                    <TableRow key={gr.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">{gr.name}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm text-muted-foreground line-clamp-1">
-                          {gr.purpose}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
-                          {gr.affectedAgents.map((agent, idx) => (
-                            <span
-                              key={idx}
-                              className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground"
-                            >
-                              {agent}
-                            </span>
-                          ))}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-xs text-muted-foreground">
-                          {gr.trigger.type}: {gr.trigger.condition}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-xs text-muted-foreground">
-                          {gr.action.type}: {gr.action.message || "—"}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Badge
-                            status={gr.status}
-                            className="text-xs"
-                          />
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm text-muted-foreground">
-                          {new Date(gr.createdAt).toLocaleDateString()}
+        {/* Success Feedback banner */}
+        {successNotice && (
+          <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono text-emerald-400 flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+            <span>{successNotice}</span>
+          </div>
+        )}
+
+        {/* Guardrail Policy Cards */}
+        <div className="space-y-4">
+          {guardrailList.map((gr) => {
+            const isActive = gr.status === "active";
+            const actionBadgeColor = 
+              gr.action.type === "block" ? "text-red-400 bg-red-500/10 border-red-500/20" :
+              gr.action.type === "require_approval" ? "text-yellow-400 bg-yellow-500/10 border-yellow-500/20" :
+              "text-violet-400 bg-violet-500/10 border-violet-500/20";
+
+            return (
+              <div 
+                key={gr.id}
+                className={`p-5 rounded-xl border bg-[#090A0E] transition-all space-y-4 ${
+                  isActive ? "border-white/[0.08] hover:border-violet-500/30" : "border-white/[0.04] opacity-75"
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2.5">
+                      <h3 className="text-base font-semibold text-white">{gr.name}</h3>
+                      <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded border ${actionBadgeColor}`}>
+                        Action: {gr.action.type.replace("_", " ")}
+                      </span>
+                      <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded ${
+                        isActive ? "text-emerald-400 bg-emerald-500/10" : "text-muted-foreground bg-white/[0.04]"
+                      }`}>
+                        {gr.status}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{gr.description}</p>
+                  </div>
+
+                  {/* Toggle Switch */}
+                  <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
+                    <span className="text-xs text-muted-foreground font-mono">
+                      {isActive ? "Enforcing" : "Disabled"}
+                    </span>
+                    <Switch
+                      checked={isActive}
+                      onCheckedChange={() => toggleGuardrail(gr.id)}
+                      aria-label={`Toggle enforcement of ${gr.name}`}
+                    />
+                  </div>
+                </div>
+
+                {/* Technical trigger specification */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                  <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.05] space-y-1">
+                    <span className="text-[10px] uppercase font-mono text-muted-foreground font-semibold">
+                      Trigger Condition
+                    </span>
+                    <p className="text-xs font-mono text-violet-300">
+                      {gr.trigger.type} :: {gr.trigger.condition}
+                    </p>
+                    <div className="text-[11px] font-mono text-zinc-400 bg-black/40 p-1.5 rounded mt-1 border border-white/[0.04]">
+                      Params: {JSON.stringify(gr.trigger.parameters)}
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.05] space-y-1">
+                    <span className="text-[10px] uppercase font-mono text-muted-foreground font-semibold">
+                      Enforced Agents ({gr.affectedAgents.length})
+                    </span>
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {gr.affectedAgents.map((agentId) => (
+                        <span key={agentId} className="px-2 py-0.5 rounded bg-white/[0.04] text-[11px] font-mono text-zinc-300">
+                          {agentId}
                         </span>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <Switch
-                            checked={gr.status === "active"}
-                            onCheckedChange={() => {}}
-                            className="h-5 w-8"
-                          />
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="flex items-center gap-1 text-xs px-2 py-1"
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="flex items-center gap-1 text-xs px-2 py-1 ml-1"
-                          >
-                            Test
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer status */}
+                <div className="flex items-center justify-between pt-2 border-t border-white/[0.05] text-[11px] text-muted-foreground font-mono">
+                  <span>Author: {gr.createdBy}</span>
+                  <span>Updated: {gr.updatedAt.slice(0, 10)}</span>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Summary Stats */}
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="p-4">
-            <CardHeader>
-              <CardTitle>Total Guardrails</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-2 text-2xl font-bold text-primary">
-              <span>{guardrails.length}</span>
-            </CardContent>
-          </Card>
-
-          <Card className="p-4">
-            <CardHeader>
-              <CardTitle>Active</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-2 text-2xl font-bold text-green-600">
-              <span>{guardrails.filter((g) => g.status === "active").length}</span>
-            </CardContent>
-          </Card>
-
-          <Card className="p-4">
-            <CardHeader>
-              <CardTitle>Testing</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-2 text-2xl font-bold text-blue-600">
-              <span>{guardrails.filter((g) => g.status === "testing").length}</span>
-            </CardContent>
-          </Card>
-
-          <Card className="p-4">
-            <CardHeader>
-              <CardTitle>Draft</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-2 text-2xl font-bold text-gray-600">
-              <span>{guardrails.filter((g) => g.status === "draft").length}</span>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
+      </div>
     </DashboardLayout>
   );
 }

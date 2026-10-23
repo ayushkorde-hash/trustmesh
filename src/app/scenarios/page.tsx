@@ -1,302 +1,153 @@
 "use client";
 export const dynamic = 'force-dynamic';
 
-import { cn } from "@/lib/utils";
+import * as React from "react";
+import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { Sidebar } from "@/components/layout/sidebar";
-import { Header } from "@/components/layout/header";
-import { Card } from "@/components/ui/card";
-import { CardHeader } from "@/components/ui/card";
-import { CardTitle } from "@/components/ui/card";
-import { CardContent } from "@/components/ui/card";
-import { Table } from "@/components/ui/table";
-import { TableHeader } from "@/components/ui/table";
-import { TableBody } from "@/components/ui/table";
-import { TableRow } from "@/components/ui/table";
-import { TableHead } from "@/components/ui/table";
-import { TableCell } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { generateId } from "@/lib/utils";
-import { EvaluationCategory, ScenarioDifficulty, RiskLevel } from "@/types";
-
-interface Scenario {
-  id: string;
-  name: string;
-  description: string;
-  category: EvaluationCategory;
-  difficulty: ScenarioDifficulty;
-  riskLevel: RiskLevel;
-  passRate: number;
-  lastRun: string | null;
-  tags: string[];
-}
-
-const scenarios: Scenario[] = [
-  {
-    id: "s-001",
-    name: "Prompt Injection",
-    description: "Agent receives hidden instructions through external content attempting to override its objective",
-    category: "prompt_injection",
-    difficulty: "medium",
-    riskLevel: "critical",
-    passRate: 58,
-    lastRun: "2h ago",
-    tags: ["text", "instruction_override", "external_content"],
-  },
-  {
-    id: "s-002",
-    name: "Tool Misuse",
-    description: "Agent uses tools for unintended purposes or exceeds permitted operations",
-    category: "tool_misuse",
-    difficulty: "hard",
-    riskLevel: "high",
-    passRate: 72,
-    lastRun: "4h ago",
-    tags: ["tool_abuse", "permissions", "unauthorized_operations"],
-  },
-  {
-    id: "s-003",
-    name: "Permission Escalation",
-    description: "Agent attempts to gain elevated permissions beyond its assigned scope",
-    category: "permission_escalation",
-    difficulty: "medium",
-    riskLevel: "high",
-    passRate: 65,
-    lastRun: "1d ago",
-    tags: ["permission_boundaries", "privilege_escalation"],
-  },
-  {
-    id: "s-004",
-    name: "Goal Drift",
-    description: "Agent progressively deviates from its original objective over multi-step workflows",
-    category: "goal_drift",
-    difficulty: "hard",
-    riskLevel: "high",
-    passRate: 45,
-    lastRun: "3d ago",
-    tags: ["objective_deviation", "multi_step", "long_horizon"],
-  },
-  {
-    id: "s-005",
-    name: "Hallucination",
-    description: "Agent generates confident but false information without valid sources",
-    category: "hallucination",
-    difficulty: "medium",
-    riskLevel: "medium",
-    passRate: 78,
-    lastRun: "1w ago",
-    tags: ["fact_generation", "source_verification"],
-  },
-  {
-    id: "s-006",
-    name: "Untrusted Information",
-    description: "Agent acts on instructions from unverified or malicious external sources",
-    category: "untrusted_information",
-    difficulty: "hard",
-    riskLevel: "critical",
-    passRate: 52,
-    lastRun: "2d ago",
-    tags: ["external_instructions", "malicious_content", "data_integrity"],
-  },
-  {
-    id: "s-007",
-    name: "Conflicting Instructions",
-    description: "Agent receives opposing directives from multiple sources simultaneously",
-    category: "conflicting_instructions",
-    difficulty: "medium",
-    riskLevel: "medium",
-    passRate: 71,
-    lastRun: "5d ago",
-    tags: ["conflicting_directives", "decision_making"],
-  },
-  {
-    id: "s-008",
-    name: "Unsafe Autonomous Action",
-    description: "Agent performs actions that could cause real-world harm if executed",
-    category: "unsafe_autonomous_action",
-    difficulty: "expert",
-    riskLevel: "critical",
-    passRate: 23,
-    lastRun: "1w ago",
-    tags: ["real_world_harm", "critical_safety"],
-  },
-  {
-    id: "s-009",
-    name: "Failure Recovery",
-    description: "Agent's ability to recover from incorrect information or failed tool calls",
-    category: "failure_recovery",
-    difficulty: "easy",
-    riskLevel: "low",
-    passRate: 89,
-    lastRun: "2w ago",
-    tags: ["recovery", "resilience", "error_handling"],
-  },
-  {
-    id: "s-010",
-    name: "Human Escalation",
-    description: "Agent's capability to recognize when human intervention is required",
-    category: "human_escalation",
-    difficulty: "easy",
-    riskLevel: "low",
-    passRate: 94,
-    lastRun: "3w ago",
-    tags: ["escalation", "human_in_the_loop"],
-  },
-];
-
-function getDifficultyColor(difficulty: ScenarioDifficulty): string {
-  switch (difficulty) {
-    case "easy": return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
-    case "medium": return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400";
-    case "hard": return "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400";
-    case "expert": return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
-    default: return "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400";
-  }
-}
-
-function getRiskLevelColor(riskLevel: RiskLevel): string {
-  switch (riskLevel) {
-    case "critical": return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
-    case "high": return "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400";
-    case "medium": return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400";
-    case "low": return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
-    default: return "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400";
-  }
-}
+import { Input } from "@/components/ui/input";
+import { 
+  FileText, 
+  Search, 
+  Play, 
+  Wrench
+} from "lucide-react";
+import { MOCK_SCENARIOS } from "@/data/mock-data";
 
 export default function ScenariosPage() {
+  const [search, setSearch] = React.useState("");
+  const [difficultyFilter, setDifficultyFilter] = React.useState<string>("all");
+
+  const filteredScenarios = MOCK_SCENARIOS.filter((scen) => {
+    const matchesSearch = scen.name.toLowerCase().includes(search.toLowerCase()) ||
+                          scen.description.toLowerCase().includes(search.toLowerCase()) ||
+                          scen.tags.some(t => t.toLowerCase().includes(search.toLowerCase()));
+    const matchesDifficulty = difficultyFilter === "all" || scen.difficulty === difficultyFilter;
+    return matchesSearch && matchesDifficulty;
+  });
+
   return (
     <DashboardLayout>
-      <Sidebar />
-      <main className="flex-1 overflow-x-hidden overflow-y-auto lg:pl-64">
-        <Header onMenuClick={() => {}} />
+      <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto">
+        
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.07]">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white flex items-center gap-2.5">
+                <FileText className="h-7 w-7 text-violet-400" />
+                <span>Adversarial Scenario Library</span>
+              </h1>
+            </div>
+            <p className="text-xs md:text-sm text-muted-foreground">
+              Pre-built and customized red-team test scenarios designed to stress-test autonomous agent boundary resilience.
+            </p>
+          </div>
 
-        <div className="pb-4">
-          <h1 className="text-2xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            Scenario Library
-          </h1>
+          <div className="flex items-center gap-3">
+            <Link href="/safety-drill">
+              <Button size="sm" className="h-9 px-4 rounded-lg bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-500 hover:to-violet-600 text-white font-medium text-xs shadow-md shadow-violet-950 flex items-center gap-2">
+                <Play className="h-3.5 w-3.5 fill-current" />
+                <span>Execute Scenario</span>
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        {/* Scenario Filters */}
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" className="flex-1">
-            All Scenarios
-          </Button>
-          <Button variant="outline" size="sm" className="flex-1">
-            Prompt Injection
-          </Button>
-          <Button variant="outline" size="sm" className="flex-1">
-            Tool Abuse
-          </Button>
-          <Button variant="outline" size="sm" className="flex-1">
-            Permission Escalation
-          </Button>
+        {/* Search & Filters */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search scenarios by title, vector, or tag..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 h-9 text-xs bg-white/[0.03] border-white/[0.08] focus-visible:ring-violet-500 rounded-lg text-white placeholder:text-muted-foreground/60"
+            />
+          </div>
+
+          <div className="flex items-center gap-1.5 self-start sm:self-auto w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+            {["all", "expert", "hard", "medium", "easy"].map((diff) => (
+              <button
+                key={diff}
+                onClick={() => setDifficultyFilter(diff)}
+                className={`px-3 py-1.5 rounded-md text-xs font-mono uppercase tracking-wider transition-all ${
+                  difficultyFilter === diff
+                    ? "bg-violet-600/20 text-violet-300 border border-violet-500/40"
+                    : "bg-white/[0.02] text-muted-foreground hover:text-white border border-white/[0.06]"
+                }`}
+              >
+                {diff}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Scenarios Table */}
-        <div className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Scenario Categories</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Scenario</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Difficulty</TableHead>
-                    <TableHead>Risk</TableHead>
-                    <TableHead>Pass Rate</TableHead>
-                    <TableHead>Last Run</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {scenarios.map((scenario) => (
-                    <TableRow key={scenario.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">{scenario.name}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <span className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
-                            {scenario.category}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          riskLevel={scenario.difficulty as RiskLevel}
-                          className="text-xs"
-                        >
-                          {scenario.difficulty}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge riskLevel={scenario.riskLevel} className="text-xs" />
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm font-medium">{scenario.passRate}%</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm text-muted-foreground">{scenario.lastRun || "—"}</span>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="flex items-center gap-1 text-xs px-2 py-1"
-                        >
-                          Run Scenario
-                          <svg
-                            className="h-3.5 w-3.5"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <line x1="5" y1="12" x2="19" y2="12" />
-                            <polyline points="12 5 19 12 12 19" />
-                          </svg>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Scenarios Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {filteredScenarios.map((scen) => {
+            const diffColor = 
+              scen.difficulty === "expert" ? "text-purple-400 bg-purple-500/10 border-purple-500/20" :
+              scen.difficulty === "hard" ? "text-red-400 bg-red-500/10 border-red-500/20" :
+              "text-yellow-400 bg-yellow-500/10 border-yellow-500/20";
 
-        {/* Category Stats */}
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          {[...Array(10).keys()].map((index) => (
-            <Card key={index} className="p-4">
-              <CardHeader>
-                <CardTitle className="text-sm">Category {index + 1}</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-2">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold">72</span>
-                  <span>/100</span>
+            return (
+              <div 
+                key={scen.id}
+                className="p-5 rounded-xl border border-white/[0.08] bg-[#090A0E] hover:border-violet-500/30 transition-all flex flex-col justify-between group space-y-4"
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded border ${diffColor}`}>
+                      Difficulty: {scen.difficulty}
+                    </span>
+                    <span className="text-xs font-mono text-zinc-400">
+                      Historical Pass Rate: <strong className="text-white">{scen.passRate}%</strong>
+                    </span>
+                  </div>
+
+                  <h3 className="text-base font-semibold text-white group-hover:text-violet-300 transition-colors">
+                    {scen.name}
+                  </h3>
+
+                  <p className="text-xs text-muted-foreground leading-relaxed mt-1 mb-3">
+                    {scen.description}
+                  </p>
+
+                  {/* Target Tools & Tags */}
+                  <div className="space-y-2 pt-2 border-t border-white/[0.05]">
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
+                      <Wrench className="h-3 w-3 text-violet-400" />
+                      <span>Target Tools: {scen.targetTools.join(", ")}</span>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {scen.tags.map((tag) => (
+                        <span key={tag} className="px-2 py-0.5 rounded bg-white/[0.03] text-[10px] font-mono text-muted-foreground border border-white/[0.04]">
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <div className="mt-1 h-1.5 w-24 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full bg-primary transition-all ease-linear duration-2s`}
-                    style={{ width: `72%` }}
-                  />
+
+                <div className="flex items-center justify-between pt-3 border-t border-white/[0.06] text-xs">
+                  <span className="font-mono text-[11px] text-muted-foreground">ID: {scen.id}</span>
+                  <Link 
+                    href={`/safety-drill?scenarioId=${scen.id}`}
+                    className="text-violet-400 hover:text-violet-300 font-medium inline-flex items-center gap-1 hover:underline"
+                  >
+                    <span>Run in Drill</span>
+                    <Play className="h-3 w-3 fill-current" />
+                  </Link>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+            );
+          })}
         </div>
-      </main>
+
+      </div>
     </DashboardLayout>
   );
 }

@@ -1,49 +1,81 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger, 
+  DropdownMenuSeparator 
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Bell, User, LogOut, Settings, Search, Menu, ChevronRight } from "lucide-react";
+import { Bell, LogOut, Settings, Search, Menu, ChevronRight, ShieldAlert, Sparkles } from "lucide-react";
 
 export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const pathname = usePathname();
   
-  // Create breadcrumb from pathname
-  const paths = pathname.split('/').filter(p => p);
-  const breadcrumbs = paths.map(p => p.charAt(0).toUpperCase() + p.slice(1).replace(/-/g, ' '));
-  if (breadcrumbs.length === 0) breadcrumbs.push("Dashboard");
+  // Format breadcrumb from pathname
+  const paths = pathname.split('/').filter(Boolean);
+  const currentTitle = paths.length === 0 
+    ? "Dashboard" 
+    : paths[paths.length - 1].replace(/-/g, ' ').replace(/^./, str => str.toUpperCase());
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-background/80 backdrop-blur-md border-b border-border/50">
-      <div className="flex h-full items-center justify-between px-6">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={onMenuClick} className="lg:hidden text-muted-foreground">
+    <header className="sticky top-0 z-30 h-16 bg-[#07080B]/80 backdrop-blur-md border-b border-white/[0.07]">
+      <div className="flex h-full items-center justify-between px-4 md:px-8">
+        
+        {/* Left: Mobile trigger & Breadcrumbs */}
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={onMenuClick} 
+            className="lg:hidden text-muted-foreground hover:text-foreground h-9 w-9"
+            aria-label="Open navigation menu"
+          >
             <Menu className="h-5 w-5" />
           </Button>
           
-          {/* Breadcrumbs */}
-          <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
-            <span>TrustMesh</span>
-            <ChevronRight className="h-3 w-3" />
-            <span className="font-medium text-foreground">{breadcrumbs[breadcrumbs.length - 1]}</span>
+          <div className="flex items-center gap-2 text-xs md:text-sm font-medium">
+            <Link href="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">
+              TrustMesh
+            </Link>
+            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />
+            <span className="text-foreground font-semibold">{currentTitle}</span>
+          </div>
+
+          {/* Engine indicator */}
+          <div className="hidden sm:inline-flex items-center gap-1.5 ml-3 px-2 py-0.5 rounded-full border border-violet-500/20 bg-violet-500/10 text-[10px] font-mono text-violet-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-violet-400" />
+            Evaluation Engine: Active (Demo Sandbox)
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* Global Search */}
-          <div className="hidden md:flex relative w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        {/* Right: Actions, Search, Notifications, User */}
+        <div className="flex items-center gap-3">
+          {/* Quick CTA to run Safety Drill */}
+          <Link href="/safety-drill" className="hidden md:inline-flex">
+            <Button size="sm" className="h-8 px-3 rounded-md bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-500 hover:to-violet-600 text-white font-medium text-xs shadow-sm shadow-violet-950 border border-violet-400/20 flex items-center gap-1.5">
+              <ShieldAlert className="h-3.5 w-3.5" />
+              <span>Run Drill</span>
+            </Button>
+          </Link>
+
+          {/* Search Bar */}
+          <div className="hidden md:flex relative w-56 lg:w-64">
+            <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
             <Input 
               type="search" 
-              placeholder="Search agents, evaluations..." 
-              className="w-full bg-secondary/30 border-border/50 pl-9 h-9 text-sm focus-visible:ring-1 focus-visible:ring-primary rounded-full transition-all hover:bg-secondary/50 focus:bg-background"
+              placeholder="Search agents, findings..." 
+              className="w-full bg-white/[0.03] border-white/[0.08] pl-8 h-8 text-xs focus-visible:ring-1 focus-visible:ring-violet-500 rounded-md placeholder:text-muted-foreground/60"
             />
-            <div className="absolute right-2.5 top-2 flex items-center gap-1">
-              <kbd className="inline-flex h-5 items-center rounded border border-border/50 bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
-                <span className="text-xs">⌘</span>K
+            <div className="absolute right-2 top-1.5">
+              <kbd className="inline-flex h-4 items-center rounded border border-white/[0.1] bg-white/[0.04] px-1 font-mono text-[9px] text-muted-foreground">
+                ⌘K
               </kbd>
             </div>
           </div>
@@ -51,21 +83,28 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           {/* Notifications */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary/50">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative h-8 w-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-white/[0.05]"
+                aria-label="View notifications"
+              >
                 <Bell className="h-4 w-4" />
-                <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-red-500 ring-2 ring-background" />
+                <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-violet-400 ring-2 ring-[#07080B]" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80 border-border/50">
-              <div className="px-4 py-3 border-b border-border/50">
-                <h4 className="font-semibold text-sm">Notifications</h4>
+            <DropdownMenuContent align="end" className="w-80 border-white/[0.1] bg-[#0C0E14] shadow-xl p-0">
+              <div className="px-4 py-3 border-b border-white/[0.07] flex items-center justify-between">
+                <span className="font-semibold text-xs text-foreground uppercase tracking-wider">Alert Feed</span>
+                <span className="text-[10px] text-violet-400 font-mono">1 Critical</span>
               </div>
-              <div className="py-2">
-                <div className="px-4 py-3 hover:bg-secondary/30 transition-colors cursor-pointer flex gap-3">
-                  <div className="h-2 w-2 mt-1.5 rounded-full bg-red-500 shrink-0" />
+              <div className="p-2 space-y-1">
+                <div className="p-2.5 rounded-md hover:bg-white/[0.04] transition-colors cursor-pointer flex gap-2.5">
+                  <div className="h-2 w-2 mt-1.5 rounded-full bg-red-400 shrink-0" />
                   <div>
-                    <p className="text-sm font-medium">Critical vulnerability found</p>
-                    <p className="text-xs text-muted-foreground mt-1">Research Agent failed prompt injection scenario.</p>
+                    <p className="text-xs font-medium text-foreground">Critical Vulnerability Detected</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">Research Agent failed adversarial prompt injection scenario.</p>
+                    <span className="text-[10px] text-muted-foreground/60 mt-1 block">15m ago • EV-8921</span>
                   </div>
                 </div>
               </div>
@@ -75,31 +114,40 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-9 w-9 rounded-full overflow-hidden border border-border/50 p-0">
+              <Button 
+                variant="ghost" 
+                className="relative h-8 w-8 rounded-full overflow-hidden border border-white/[0.1] p-0 hover:border-violet-500/50 transition-colors"
+                aria-label="User account settings"
+              >
                 <Avatar className="h-full w-full">
-                  <AvatarImage src="/avatar.png" alt="User" />
-                  <AvatarFallback className="bg-primary text-primary-foreground text-xs">AY</AvatarFallback>
+                  <AvatarFallback className="bg-gradient-to-br from-violet-600 to-indigo-700 text-white text-[11px] font-semibold">
+                    AY
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 border-border/50">
-              <div className="flex flex-col space-y-1 p-3">
-                <p className="text-sm font-medium leading-none">Ayush</p>
-                <p className="text-xs leading-none text-muted-foreground mt-1">ayush@trustmesh.ai</p>
+            <DropdownMenuContent align="end" className="w-56 border-white/[0.1] bg-[#0C0E14] shadow-xl">
+              <div className="flex flex-col space-y-0.5 p-2">
+                <p className="text-xs font-semibold text-foreground">Ayush</p>
+                <p className="text-[11px] text-muted-foreground">Security Engineer (Admin)</p>
               </div>
-              <DropdownMenuSeparator className="bg-border/50" />
-              <DropdownMenuItem className="text-xs cursor-pointer focus:bg-secondary/50">
-                <User className="h-4 w-4 mr-2" />
-                Profile
+              <DropdownMenuSeparator className="bg-white/[0.08]" />
+              <DropdownMenuItem asChild className="text-xs cursor-pointer focus:bg-white/[0.06]">
+                <Link href="/settings" className="flex items-center">
+                  <Settings className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
+                  Settings & API Keys
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-xs cursor-pointer focus:bg-secondary/50">
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
+              <DropdownMenuItem asChild className="text-xs cursor-pointer focus:bg-white/[0.06]">
+                <Link href="/activity" className="flex items-center">
+                  <Sparkles className="h-3.5 w-3.5 mr-2 text-violet-400" />
+                  Audit Trail
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-border/50" />
-              <DropdownMenuItem className="text-xs text-red-500 focus:bg-red-500/10 focus:text-red-500 cursor-pointer">
-                <LogOut className="h-4 w-4 mr-2" />
-                Log out
+              <DropdownMenuSeparator className="bg-white/[0.08]" />
+              <DropdownMenuItem className="text-xs text-red-400 focus:bg-red-500/10 focus:text-red-300 cursor-pointer">
+                <LogOut className="h-3.5 w-3.5 mr-2" />
+                Sign Out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

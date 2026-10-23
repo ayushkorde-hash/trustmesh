@@ -1,259 +1,321 @@
 "use client";
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Activity, AlertTriangle, ArrowRight, ArrowUpRight, BarChart3, CheckCircle2, ShieldAlert, ShieldCheck, ShieldOff } from "lucide-react";
-import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { Sidebar } from "@/components/layout/sidebar";
-import { Header } from "@/components/layout/header";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { TrustMesh } from "@/components/ui/trust-mesh";
+import * as React from "react";
 import Link from "next/link";
-
-interface RecentEvaluation {
-  id: string;
-  agentName: string;
-  scenarioName: string;
-  result: "passed" | "failed" | "review";
-  severity: "critical" | "high" | "medium" | "low";
-  score: number;
-  startedAt: string;
-}
+import { 
+  Activity, 
+  AlertTriangle, 
+  ArrowRight, 
+  ArrowUpRight, 
+  ShieldCheck, 
+  Shield, 
+  Bot, 
+  Play
+} from "lucide-react";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { Button } from "@/components/ui/button";
+import { MOCK_AGENTS, MOCK_EVALUATIONS, MOCK_GUARDRAILS } from "@/data/mock-data";
 
 export default function Dashboard() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const recentEvaluations: RecentEvaluation[] = [
-    { id: "eval-001", agentName: "Research Agent", scenarioName: "Prompt Injection", result: "failed", severity: "critical", score: 61, startedAt: "2m ago" },
-    { id: "eval-002", agentName: "Support Agent", scenarioName: "Tool Misuse", result: "passed", severity: "low", score: 94, startedAt: "14m ago" },
-    { id: "eval-003", agentName: "Finance Agent", scenarioName: "Goal Drift", result: "review", severity: "high", score: 72, startedAt: "1h ago" },
-    { id: "eval-004", agentName: "Data Agent", scenarioName: "Permission Escalation", result: "passed", severity: "low", score: 91, startedAt: "3h ago" },
-  ];
-
-  if (!mounted) return null;
-
   return (
     <DashboardLayout>
-      <Sidebar />
-      <main className="flex-1 overflow-x-hidden overflow-y-auto lg:pl-64 bg-background selection:bg-white/10 text-foreground">
-        <Header onMenuClick={() => {}} />
+      <div className="p-4 md:p-8 space-y-8 max-w-7xl mx-auto">
+        
+        {/* Top Header with Context & Demo Banner */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-white/[0.07]">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
+                Security Command Center
+              </h1>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono border border-violet-500/30 bg-violet-500/10 text-violet-300">
+                <span className="h-1.5 w-1.5 rounded-full bg-violet-400 animate-pulse" />
+                Demo Telemetry
+              </span>
+            </div>
+            <p className="text-xs md:text-sm text-muted-foreground">
+              Monitor adversarial stress tests, policy violations, and guardrail enforcement for autonomous agent fleets.
+            </p>
+          </div>
 
-        <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto">
-          {/* Header */}
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col gap-2"
-          >
-            <h1 className="text-3xl font-bold tracking-tight">Good morning, Ayush.</h1>
-            <p className="text-muted-foreground text-lg">Monitor the reliability of your autonomous agents.</p>
-          </motion.div>
+          <div className="flex items-center gap-3">
+            <Link href="/safety-drill">
+              <Button className="h-9 px-4 rounded-lg bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-500 hover:to-violet-600 text-white font-medium text-xs shadow-md shadow-violet-950 border border-violet-400/25 flex items-center gap-2">
+                <Play className="h-3.5 w-3.5 fill-current" />
+                <span>Launch Safety Drill</span>
+              </Button>
+            </Link>
+          </div>
+        </div>
 
-          {/* Top Metrics */}
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-          >
-            <MetricCard title="Agents Monitored" value="6" trend="+2 this week" icon={<Activity className="h-4 w-4 text-zinc-400" />} />
-            <MetricCard title="Evaluations" value="184" trend="+12% this week" trendUp icon={<BarChart3 className="h-4 w-4 text-zinc-400" />} />
-            <MetricCard title="Critical Findings" value="7" trend="-3 since last scan" trendUp icon={<AlertTriangle className="h-4 w-4 text-red-500" />} />
-            <MetricCard title="Average Trust Score" value="86" trend="+8.4% last 30 days" trendUp icon={<ShieldCheck className="h-4 w-4 text-green-500" />} />
-          </motion.div>
+        {/* 4 Primary Command Metrics */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <div className="p-5 rounded-xl border border-white/[0.08] bg-[#090A0E] hover:border-white/[0.15] transition-all">
+            <div className="flex items-center justify-between text-muted-foreground mb-3">
+              <span className="text-xs uppercase font-medium tracking-wider">Registered Agents</span>
+              <Bot className="h-4 w-4 text-violet-400" />
+            </div>
+            <div className="flex items-baseline justify-between">
+              <span className="text-3xl font-bold font-mono text-white">{MOCK_AGENTS.length}</span>
+              <span className="text-xs text-emerald-400 font-mono">100% active</span>
+            </div>
+            <span className="text-[11px] text-muted-foreground mt-2 block">
+              1 high risk, 1 medium, 2 low
+            </span>
+          </div>
 
-          {/* Hero / Trust Visual */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="relative rounded-xl border border-border/50 bg-secondary/20 overflow-hidden h-72 border-gradient flex flex-col items-center justify-center text-center p-8 glow-sm"
-          >
-            <TrustMesh />
-            <div className="relative z-20 flex flex-col items-center">
-              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-widest mb-2">Agent Trust Overview</h2>
-              <div className="flex items-baseline gap-2">
-                <span className="text-7xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white to-zinc-500">86</span>
-                <span className="text-xl font-medium text-zinc-500">/ 100</span>
+          <div className="p-5 rounded-xl border border-white/[0.08] bg-[#090A0E] hover:border-white/[0.15] transition-all">
+            <div className="flex items-center justify-between text-muted-foreground mb-3">
+              <span className="text-xs uppercase font-medium tracking-wider">Evaluations Run</span>
+              <Activity className="h-4 w-4 text-violet-400" />
+            </div>
+            <div className="flex items-baseline justify-between">
+              <span className="text-3xl font-bold font-mono text-white">28</span>
+              <span className="text-xs text-violet-400 font-mono">+4 this week</span>
+            </div>
+            <span className="text-[11px] text-muted-foreground mt-2 block">
+              Continuous red-team test harness
+            </span>
+          </div>
+
+          <div className="p-5 rounded-xl border border-white/[0.08] bg-[#090A0E] hover:border-white/[0.15] transition-all">
+            <div className="flex items-center justify-between text-muted-foreground mb-3">
+              <span className="text-xs uppercase font-medium tracking-wider">Active Guardrails</span>
+              <ShieldCheck className="h-4 w-4 text-emerald-400" />
+            </div>
+            <div className="flex items-baseline justify-between">
+              <span className="text-3xl font-bold font-mono text-white">{MOCK_GUARDRAILS.filter(g => g.status === 'active').length}</span>
+              <span className="text-xs text-emerald-400 font-mono">4 Enforced</span>
+            </div>
+            <span className="text-[11px] text-muted-foreground mt-2 block">
+              Pre-execution sanitizers active
+            </span>
+          </div>
+
+          <div className="p-5 rounded-xl border border-white/[0.08] bg-[#090A0E] hover:border-white/[0.15] transition-all">
+            <div className="flex items-center justify-between text-muted-foreground mb-3">
+              <span className="text-xs uppercase font-medium tracking-wider">Fleet Trust Score</span>
+              <Shield className="h-4 w-4 text-violet-400" />
+            </div>
+            <div className="flex items-baseline justify-between">
+              <span className="text-3xl font-bold font-mono text-violet-400">82 <span className="text-base text-muted-foreground font-normal">/ 100</span></span>
+              <span className="text-xs text-yellow-400 font-mono">Needs Review</span>
+            </div>
+            <span className="text-[11px] text-muted-foreground mt-2 block">
+              Based on adversarial benchmarks
+            </span>
+          </div>
+
+        </div>
+
+        {/* Recommended Action Alert */}
+        <div className="p-4 rounded-xl border border-red-500/30 bg-gradient-to-r from-red-950/20 via-[#0A0C12] to-[#0A0C12] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className="h-9 w-9 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 shrink-0 mt-0.5">
+              <AlertTriangle className="h-4.5 w-4.5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-red-400 uppercase tracking-wider font-mono">Critical Vulnerability Detected</span>
+                <span className="text-[10px] text-muted-foreground font-mono">EV-8921</span>
               </div>
-              <p className="text-sm font-medium text-green-400 mt-2 flex items-center gap-1">
-                <ArrowUpRight className="h-4 w-4" />
-                Overall Trust is improving
+              <p className="text-xs md:text-sm text-foreground/90 mt-0.5">
+                Research Agent failed adversarial prompt injection scenario. Recommended action: Enforce System Prompt Sanitizer rule #SP-04 and retest.
               </p>
             </div>
-          </motion.div>
+          </div>
+          <div className="flex items-center gap-2.5 shrink-0 w-full sm:w-auto">
+            <Link href="/findings" className="w-full sm:w-auto">
+              <Button variant="outline" size="sm" className="w-full sm:w-auto h-8 text-xs border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.08]">
+                View Finding
+              </Button>
+            </Link>
+            <Link href="/safety-drill" className="w-full sm:w-auto">
+              <Button size="sm" className="w-full sm:w-auto h-8 text-xs bg-red-600 hover:bg-red-500 text-white font-medium">
+                Retest Agent
+              </Button>
+            </Link>
+          </div>
+        </div>
 
-          {/* Attention Required */}
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="space-y-4"
-          >
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold tracking-tight">Attention Required</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Critical Alert */}
-              <div className="p-5 rounded-xl border border-red-900/50 bg-red-950/20 flex flex-col justify-between hover:bg-red-950/30 transition-colors group">
+        {/* Middle Two-Column Grid: Risk Dimension Breakdown & Active Agent Health */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          {/* Left: Security Posture by Dimension */}
+          <div className="lg:col-span-7 p-6 rounded-xl border border-white/[0.08] bg-[#090A0E] flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/20 font-medium">CRITICAL</Badge>
-                    <span className="text-xs text-muted-foreground">Research Agent</span>
-                  </div>
-                  <h3 className="font-medium text-sm mb-1 text-zinc-200">Prompt injection vulnerability detected.</h3>
+                  <h3 className="text-sm font-semibold text-white">Adversarial Evaluation Dimensions</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">Aggregated pass rates across core safety categories.</p>
                 </div>
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-xs text-zinc-500">Trust score</span>
-                    <span className="text-sm font-semibold text-red-400">61</span>
-                  </div>
-                  <Link href="/evaluations/eval-001" className="text-xs font-medium text-red-400 hover:text-red-300 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Review Finding <ArrowRight className="h-3 w-3" />
-                  </Link>
-                </div>
+                <span className="text-xs font-mono text-muted-foreground">Target: &gt;90%</span>
               </div>
 
-              {/* High Alert */}
-              <div className="p-5 rounded-xl border border-orange-900/50 bg-orange-950/20 flex flex-col justify-between hover:bg-orange-950/30 transition-colors group">
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <Badge variant="outline" className="bg-orange-500/10 text-orange-500 border-orange-500/20 font-medium">HIGH</Badge>
-                    <span className="text-xs text-muted-foreground">Finance Agent</span>
+              <div className="space-y-4 pt-2">
+                {[
+                  { name: "Tool Safety & Boundary Enforcement", score: 92, status: "passing", color: "bg-emerald-500" },
+                  { name: "Permission Escalation Defense", score: 88, status: "passing", color: "bg-emerald-500" },
+                  { name: "Human Supervisor Escalation", score: 94, status: "passing", color: "bg-emerald-500" },
+                  { name: "Information & PII Redaction", score: 84, status: "passing", color: "bg-emerald-500" },
+                  { name: "Goal Drift Resistance", score: 68, status: "review", color: "bg-yellow-500" },
+                  { name: "Adversarial Prompt Injection Defense", score: 48, status: "failing", color: "bg-red-500" },
+                ].map((item) => (
+                  <div key={item.name} className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-zinc-300 font-medium">{item.name}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-zinc-400">{item.score}%</span>
+                        <span className={`text-[10px] uppercase font-mono px-1.5 py-0.2 rounded ${
+                          item.status === 'passing' ? 'text-emerald-400 bg-emerald-500/10' :
+                          item.status === 'review' ? 'text-yellow-400 bg-yellow-500/10' :
+                          'text-red-400 bg-red-500/10'
+                        }`}>
+                          {item.status}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="h-1.5 w-full bg-white/[0.05] rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full ${item.color} rounded-full transition-all duration-500`} 
+                        style={{ width: `${item.score}%` }}
+                      />
+                    </div>
                   </div>
-                  <h3 className="font-medium text-sm mb-1 text-zinc-200">Unauthorized tool access attempt.</h3>
-                </div>
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-xs text-zinc-500">Trust score</span>
-                    <span className="text-sm font-semibold text-orange-400">72</span>
-                  </div>
-                  <Link href="/agents/agent-003" className="text-xs font-medium text-orange-400 hover:text-orange-300 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Review <ArrowRight className="h-3 w-3" />
-                  </Link>
-                </div>
-              </div>
-
-              {/* Review Alert */}
-              <div className="p-5 rounded-xl border border-yellow-900/50 bg-yellow-950/20 flex flex-col justify-between hover:bg-yellow-950/30 transition-colors group">
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20 font-medium">REVIEW</Badge>
-                    <span className="text-xs text-muted-foreground">Support Agent</span>
-                  </div>
-                  <h3 className="font-medium text-sm mb-1 text-zinc-200">Recovery behavior requires validation.</h3>
-                </div>
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-xs text-zinc-500">Trust score</span>
-                    <span className="text-sm font-semibold text-yellow-400">88</span>
-                  </div>
-                  <Link href="/evaluations/eval-005" className="text-xs font-medium text-yellow-400 hover:text-yellow-300 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Validate <ArrowRight className="h-3 w-3" />
-                  </Link>
-                </div>
+                ))}
               </div>
             </div>
-          </motion.div>
 
-          {/* Recent Evaluations */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Card className="border-border/50 bg-background overflow-hidden border-gradient">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-lg">Recent Evaluations</CardTitle>
-                <Link href="/evaluations" className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
-                  View all <ArrowRight className="h-3 w-3" />
+            <div className="pt-6 mt-6 border-t border-white/[0.06] flex items-center justify-between text-xs text-muted-foreground">
+              <span>Next automated evaluation scheduled: in 4 hours</span>
+              <Link href="/scenarios" className="text-violet-400 hover:text-violet-300 inline-flex items-center gap-1">
+                Explore 5 Scenarios <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Right: Agent Fleet Quick Status */}
+          <div className="lg:col-span-5 p-6 rounded-xl border border-white/[0.08] bg-[#090A0E] flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-sm font-semibold text-white">Monitored Agent Fleet</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">Active configurations & current trust scores.</p>
+                </div>
+                <Link href="/agents" className="text-xs text-violet-400 hover:text-violet-300 inline-flex items-center">
+                  All ({MOCK_AGENTS.length})
                 </Link>
-              </CardHeader>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader className="bg-secondary/10">
-                    <TableRow className="border-border/50 hover:bg-transparent">
-                      <TableHead className="text-xs uppercase text-zinc-500 font-medium tracking-wider h-10">Agent</TableHead>
-                      <TableHead className="text-xs uppercase text-zinc-500 font-medium tracking-wider h-10">Scenario</TableHead>
-                      <TableHead className="text-xs uppercase text-zinc-500 font-medium tracking-wider h-10">Result</TableHead>
-                      <TableHead className="text-xs uppercase text-zinc-500 font-medium tracking-wider h-10">Severity</TableHead>
-                      <TableHead className="text-xs uppercase text-zinc-500 font-medium tracking-wider h-10 text-right">Score</TableHead>
-                      <TableHead className="text-xs uppercase text-zinc-500 font-medium tracking-wider h-10 text-right pr-6">Time</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {recentEvaluations.map((evalItem) => (
-                      <TableRow key={evalItem.id} className="border-border/50 hover:bg-secondary/20 transition-colors group cursor-pointer">
-                        <TableCell className="font-medium text-sm text-zinc-200">{evalItem.agentName}</TableCell>
-                        <TableCell className="text-sm text-zinc-400">{evalItem.scenarioName}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1.5">
-                            {evalItem.result === 'passed' && <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />}
-                            {evalItem.result === 'failed' && <ShieldOff className="h-3.5 w-3.5 text-red-500" />}
-                            {evalItem.result === 'review' && <ShieldAlert className="h-3.5 w-3.5 text-yellow-500" />}
-                            <span className="text-sm capitalize text-zinc-300">{evalItem.result}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className={`
-                            ${evalItem.severity === 'critical' ? 'text-red-500 border-red-500/20 bg-red-500/10' : ''}
-                            ${evalItem.severity === 'high' ? 'text-orange-500 border-orange-500/20 bg-orange-500/10' : ''}
-                            ${evalItem.severity === 'medium' ? 'text-yellow-500 border-yellow-500/20 bg-yellow-500/10' : ''}
-                            ${evalItem.severity === 'low' ? 'text-green-500 border-green-500/20 bg-green-500/10' : ''}
-                          `}>
-                            {evalItem.severity}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right text-sm font-semibold">
-                          <span className={
-                            evalItem.score >= 90 ? "text-green-400" :
-                            evalItem.score >= 70 ? "text-yellow-400" : "text-red-400"
-                          }>{evalItem.score}</span>
-                        </TableCell>
-                        <TableCell className="text-right text-sm text-zinc-500 pr-6">
-                          {evalItem.startedAt}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
-      </main>
-    </DashboardLayout>
-  );
-}
+              </div>
 
-function MetricCard({ title, value, trend, trendUp, icon }: { title: string, value: string, trend: string, trendUp?: boolean, icon: React.ReactNode }) {
-  return (
-    <Card className="border-border/50 bg-secondary/10 border-gradient hover:bg-secondary/20 transition-colors">
-      <CardContent className="p-5 flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          {icon}
+              <div className="space-y-3">
+                {MOCK_AGENTS.map((agent) => (
+                  <Link 
+                    key={agent.id} 
+                    href={`/agents/${agent.id}`}
+                    className="p-3 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-violet-500/30 transition-all block group"
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-semibold text-white group-hover:text-violet-300 transition-colors">
+                        {agent.name}
+                      </span>
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded uppercase ${
+                        agent.riskLevel === 'high' ? 'text-red-400 bg-red-500/10' :
+                        agent.riskLevel === 'medium' ? 'text-yellow-400 bg-yellow-500/10' :
+                        'text-emerald-400 bg-emerald-500/10'
+                      }`}>
+                        {agent.riskLevel} risk
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono">
+                      <span>{agent.model}</span>
+                      <span>{agent.allowedTools.length} tools allowed</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-4 mt-4 border-t border-white/[0.06]">
+              <Link href="/agents" className="w-full">
+                <Button variant="outline" size="sm" className="w-full h-8 text-xs border-white/[0.1] bg-white/[0.02] hover:bg-white/[0.06] flex items-center justify-center gap-1.5">
+                  <Bot className="h-3.5 w-3.5" />
+                  <span>Configure Agent Security Policies</span>
+                </Button>
+              </Link>
+            </div>
+          </div>
+
         </div>
-        <div className="flex flex-col gap-1">
-          <span className="text-3xl font-bold tracking-tight text-zinc-100">{value}</span>
-          <span className={`text-xs font-medium ${trendUp ? 'text-green-500' : 'text-zinc-500'}`}>
-            {trend}
-          </span>
+
+        {/* Bottom Section: Recent Evaluations Table */}
+        <div className="rounded-xl border border-white/[0.08] bg-[#090A0E] overflow-hidden">
+          <div className="p-5 border-b border-white/[0.07] flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-white">Recent Evaluation Runs</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Observable red-team execution logs and findings.</p>
+            </div>
+            <Link href="/evaluations">
+              <Button variant="outline" size="sm" className="h-7 text-xs border-white/[0.1] hover:bg-white/[0.05] flex items-center gap-1">
+                <span>View Full History</span>
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </Button>
+            </Link>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="border-b border-white/[0.06] bg-white/[0.01] text-muted-foreground uppercase text-[10px] font-mono tracking-wider">
+                <tr>
+                  <th className="py-3 px-5">Run ID</th>
+                  <th className="py-3 px-5">Target Agent</th>
+                  <th className="py-3 px-5">Adversarial Scenario</th>
+                  <th className="py-3 px-5">Trust Score</th>
+                  <th className="py-3 px-5">Status</th>
+                  <th className="py-3 px-5">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/[0.04]">
+                {MOCK_EVALUATIONS.map((evalRun) => (
+                  <tr key={evalRun.id} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="py-3 px-5 font-mono text-violet-400 font-semibold">{evalRun.id}</td>
+                    <td className="py-3 px-5 font-medium text-white">{evalRun.agentName}</td>
+                    <td className="py-3 px-5 text-muted-foreground">{evalRun.scenarioName}</td>
+                    <td className="py-3 px-5 font-mono font-medium">
+                      <span className={
+                        (evalRun.score?.overall ?? 0) >= 85 ? 'text-emerald-400' :
+                        (evalRun.score?.overall ?? 0) >= 60 ? 'text-yellow-400' :
+                        'text-red-400'
+                      }>
+                        {evalRun.score?.overall ?? 'N/A'}/100
+                      </span>
+                    </td>
+                    <td className="py-3 px-5">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono uppercase ${
+                        evalRun.status === 'passed' ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' :
+                        evalRun.status === 'review' ? 'text-yellow-400 bg-yellow-500/10 border border-yellow-500/20' :
+                        'text-red-400 bg-red-500/10 border border-red-500/20'
+                      }`}>
+                        {evalRun.status}
+                      </span>
+                    </td>
+                    <td className="py-3 px-5">
+                      <Link 
+                        href={`/evaluations/${evalRun.id}`}
+                        className="text-violet-400 hover:text-violet-300 font-medium inline-flex items-center gap-1 hover:underline"
+                      >
+                        Inspect Trace <ArrowRight className="h-3 w-3" />
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-        {/* Simple Sparkline */}
-        <div className="h-8 w-full mt-2 flex items-end gap-1 opacity-50">
-          {[40, 55, 45, 60, 50, 75, 86].map((h, i) => (
-            <div key={i} className="flex-1 bg-primary/20 rounded-t-sm" style={{ height: `${h}%` }} />
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+
+      </div>
+    </DashboardLayout>
   );
 }
